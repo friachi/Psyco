@@ -1,0 +1,29 @@
+#######################################
+# Syntax Coloring Map For Psyco
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+Psyco	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+readAnalog	KEYWORD2
+readEncoderDirection	KEYWORD2
+readButtonState	KEYWORD2
+writeCV	KEYWORD2
+writeGate	KEYWORD2
+pinModeGPIO	KEYWORD2
+digitalReadGPIO	KEYWORD2
+analogReadGPIO	KEYWORD2
+digitalWriteGPIO	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+

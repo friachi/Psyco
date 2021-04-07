@@ -1,0 +1,19 @@
+{
+  "name": "Psyco",
+  "version": "1.0.0",
+  "keywords": "synth, cv, gate, controller",
+  "description": "PSYCO programmable synth controller dev board",
+  "authors":
+  {
+    "name": "Fahd Al Riachi",
+    "email": "riachi@gmail.com"
+  }
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/.....git"
+  },
+  "frameworks": "arduino",
+  "platforms": "atmelavr",
+  "board" : "nanoatmega328"
+}
