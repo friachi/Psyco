@@ -2,8 +2,10 @@
  *  @file psyco.cpp
  *  
  *  This is a library for PSYCO programmable synth controller dev board having:
- *  - 21x analog inputs (10-bits): 0-17
+ *  - 18x analog inputs (10-bits): 0-17 {8 inputs on ADC1, 8 inputs on ADC2, A6, A7}
+ *    - Expandable using up to 3 Psyco Extension boards (each providing 48 analog inputs using any 6 psyco analog inputs)
  *  - 3x GPIO (INPUT,INPUT_PULLUP, OUTPUT): {0:A3, 1:A4, 2:A5}
+ *    - if using Psyco expander, these pins are reserved, used internally as MUX select pins (OUTPUT)
  *  - 4x CV out (5v @ 12-bit): 0-3
  *  - 4x buffered Gate out: 0-3 {0:D6, 1:D7, 2:D8, 3:D9}
  *  - 1x unbuffered digital out: D10
@@ -14,6 +16,7 @@
  *  - Arduino Nano v3.x
  *  - 10-bit ADC: MCP3008 
  *  - 12-bit DAC: MCP-49xx
+ *  - 8x1 mux/demux CD74HC4051E
  *  - Adafruit rotary encoder (24 step incremental quadrature + switch)
  *  
  *  MIT license, all text above must be included in any redistribution
@@ -23,8 +26,13 @@
 #include "Psyco.h"
 #include <SPI.h>
 
-bool Psyco::begin(SPIClass *theSPI) {
+#define _MUX_S0 A3
+#define _MUX_S1 A4
+#define _MUX_S2 A5
+#define _INPUTS_PER_MUX 8
 
+bool Psyco::begin(SPIClass *theSPI) {
+  
   // ADC
   this->_ADC1_CS = 2;
   this->_ADC2_CS = 3;
@@ -89,9 +97,58 @@ bool Psyco::begin(SPIClass *theSPI) {
   // SPI
   _spi = theSPI;
   _spi->begin();
-  
-
+    
   return true;
+}
+
+int Psyco::expandInputs(byte inputCount){
+
+  // provided the count of analog inputs to expand, it will expanding 
+  // psyco inputs starting from analog input 0 up to 18, in order.
+  // each input will mux-in 8 inputs (i.e as per _INPUTS_PER_MUX).
+  // it returns the total number of inputs after mux 
+  
+  if ((inputCount <= 0) || (inputCount > 18))
+    return -1;
+ 
+  this->_NB_OF_MUX = inputCount;
+  
+  // set mux select pins as outputs
+  pinMode(_MUX_S0, OUTPUT);
+  pinMode(_MUX_S1, OUTPUT);
+  pinMode(_MUX_S2, OUTPUT);
+
+  // detect number of needed mux inputs and intialize port numbers
+  for(byte i = 0; i < inputCount; i++){
+      this->_MUX_INPUTS[i] = i;
+  }
+  
+  this->_TOTAL_MUX_INPUTS = this->_NB_OF_MUX * _INPUTS_PER_MUX;
+  
+  return this->_TOTAL_MUX_INPUTS;
+}
+
+int Psyco::readAnalogMux(byte channel){
+
+  byte mux = 0; // mux chip number (0-17)
+  byte port = 0; // input number on chip (0-7)
+  int value = 0; // value at mux/port (0-1023)
+    
+  if (channel < 0 || channel > (this->_TOTAL_MUX_INPUTS - 1)){
+    //mux pin out of range!
+    return;    
+  }
+  else {
+    mux = ceil((float)(channel + 1) / (float)(this->_TOTAL_MUX_INPUTS) * this->_NB_OF_MUX) - 1;
+
+    port = channel % 8;
+    
+    ::digitalWrite(_MUX_S0, HIGH && (port & B00000001));
+    ::digitalWrite(_MUX_S1, HIGH && (port & B00000010));
+    ::digitalWrite(_MUX_S2, HIGH && (port & B00000100));
+    value = this->readAnalog(this->_MUX_INPUTS[mux]);
+    return value;
+  }
 }
 
 

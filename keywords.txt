@@ -14,6 +14,8 @@ Psyco	KEYWORD1
 
 begin	KEYWORD2
 readAnalog	KEYWORD2
+expandInputs	KEYWORD2
+readAnalogMux	KEYWORD2	
 readEncoderDirection	KEYWORD2
 readButtonState	KEYWORD2
 writeCV	KEYWORD2
@@ -21,7 +23,7 @@ writeGate	KEYWORD2
 pinModeGPIO	KEYWORD2
 digitalReadGPIO	KEYWORD2
 analogReadGPIO	KEYWORD2
-digitalWriteGPIO	KEYWORD2
+digitalWriteGPIO	KEYWORD2	
 
 #######################################
 # Constants (LITERAL1)

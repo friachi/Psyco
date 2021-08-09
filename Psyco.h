@@ -2,8 +2,10 @@
  *  @file psyco.h
  *  
  *  This is a library for PSYCO programmable synth controller dev board having:
- *  - 21x analog inputs (10-bits): 0-17
+ *  - 18x analog inputs (10-bits): 0-17 {8 inputs on ADC1, 8 inputs on ADC2, A6, A7}
+ *    - Expandable using up to 3 Psyco Extension boards (each providing 48 analog inputs using any 6 psyco analog inputs)
  *  - 3x GPIO (INPUT,INPUT_PULLUP, OUTPUT): {0:A3, 1:A4, 2:A5}
+ *    - if using Psyco expander, these pins are reserved, used internally as MUX select pins (OUTPUT)
  *  - 4x CV out (5v @ 12-bit): 0-3
  *  - 4x buffered Gate out: 0-3 {0:D6, 1:D7, 2:D8, 3:D9}
  *  - 1x unbuffered digital out: D10
@@ -14,10 +16,12 @@
  *  - Arduino Nano v3.x
  *  - 10-bit ADC: MCP3008 
  *  - 12-bit DAC: MCP-49xx
+ *  - 8x1 mux/demux CD74HC4051E
  *  - Adafruit rotary encoder (24 step incremental quadrature + switch)
  *  
  *  MIT license, all text above must be included in any redistribution
  */
+
 
 #ifndef Psyco_h
 #define Psyco_h
@@ -38,6 +42,8 @@ class Psyco {
     byte digitalReadGPIO(byte channel);
     unsigned int analogReadGPIO(byte channel);
     void digitalWriteGPIO(byte channel, byte value);
+    int expandInputs(byte inputCount);
+    int readAnalogMux(byte channel);
       
   private:
     SPIClass *_spi;
@@ -75,7 +81,10 @@ class Psyco {
     unsigned int readADC(byte ADC_CS,byte channel);
     void writeDAC(byte DAC_CS, byte channel, unsigned int value);
     byte mapGPIO(byte channel);
-  
+   
+    byte _NB_OF_MUX;
+    byte _TOTAL_MUX_INPUTS;
+    byte _MUX_INPUTS[];
 };
 
 #endif
