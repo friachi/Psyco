@@ -2,13 +2,13 @@
  
 An Arduino library for PSYCO programmable synth controller dev board having:
 - 18x analog inputs (10-bits ADC): 0-17	{0-7: ADC1, 8-15: ADC2, 16:A6, 17:A7}
-	- Expandable using up to 3 Psyco Extension boards (each providing 48 analog inputs using any 6 psyco analog inputs)
+	- Expandable using up to 144 inputs, using 3 Psyco Extension boards (each providing 48 analog inputs)
 
 - 3x GPIO (INPUT,INPUT_PULLUP, OUTPUT): {0:A3, 1:A4, 2:A5}
 - 4x CV out (5v @ 12-bit): 0-3
 - 4x buffered Gate out: 0-3 {0:D6, 1:D7, 2:D8, 3:D9}
 - 1x unbuffered digital out: D10
-- MINI IN  (D0)
+- MIDI IN  (D0)
 - MIDI OUT (D1)
 
 Designed specifically to work with PSYCO board which has: 
